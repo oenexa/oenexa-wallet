@@ -1,0 +1,18 @@
+﻿groups:
+  - name: oenexa-wallet-alerts
+    rules:
+      - alert: ServiceDown
+        expr: up{service=\"oenexa-wallet\"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: \"oenexa-wallet instance is down\"
+          description: \"Pod for oenexa-wallet has been down for more than 1 minute.\"
+      - alert: High5xxRate
+        expr: rate(http_requests_total{service=\"oenexa-wallet\",status=~\"5..\"}[5m]) > 0.05
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: \"Elevated 5xx error rate on oenexa-wallet\"
