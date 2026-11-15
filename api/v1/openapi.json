@@ -1,0 +1,115 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "OENEXA Wallet & Double-Entry Ledger API",
+    "version": "1.0.0",
+    "description": "Multi-asset custody, balance ledgers, and shielded quantum notes."
+  },
+  "servers": [
+    {
+      "url": "https://app.oenexa.com/api/wallet",
+      "description": "API Gateway Wallet Route"
+    }
+  ],
+  "paths": {
+    "/v1/accounts": {
+      "post": {
+        "summary": "Create User Wallet Account",
+        "operationId": "createAccount",
+        "responses": {
+          "201": {
+            "description": "Account created"
+          }
+        }
+      }
+    },
+    "/v1/accounts/{accountId}/balances": {
+      "get": {
+        "summary": "Fetch Account Balances",
+        "operationId": "getBalances",
+        "parameters": [
+          { "name": "accountId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Balance response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BalanceResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/transfers": {
+      "post": {
+        "summary": "Execute Double-Entry Balance Transfer",
+        "operationId": "transferFunds",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Transfer executed"
+          }
+        }
+      }
+    },
+    "/v1/shielded/notes": {
+      "post": {
+        "summary": "Mint Shielded Quantum Note",
+        "operationId": "createShieldedNote",
+        "responses": {
+          "201": {
+            "description": "Shielded Note Minted"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BalanceResponse": {
+        "type": "object",
+        "properties": {
+          "accountId": { "type": "string" },
+          "balances": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "asset": { "type": "string" },
+                "available": { "type": "string" },
+                "reserved": { "type": "string" },
+                "total": { "type": "string" }
+              },
+              "required": ["asset", "available", "reserved", "total"]
+            }
+          }
+        },
+        "required": ["accountId", "balances"]
+      },
+      "TransferRequest": {
+        "type": "object",
+        "properties": {
+          "sourceAccountId": { "type": "string" },
+          "destinationAccountId": { "type": "string" },
+          "asset": { "type": "string" },
+          "amount": { "type": "string" },
+          "idempotencyKey": { "type": "string" }
+        },
+        "required": ["sourceAccountId", "destinationAccountId", "asset", "amount", "idempotencyKey"]
+      }
+    }
+  }
+}

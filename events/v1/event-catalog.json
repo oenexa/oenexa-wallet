@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "domain": "com.oenexa.wallet",
+  "version": "1.0.0",
+  "events": [
+    {
+      "type": "com.oenexa.wallet.balance.credited.v1",
+      "description": "Emitted when funds are credited to an account ledger",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "type": "string", "example": "com.oenexa.wallet.balance.credited.v1" },
+          "data": {
+            "type": "object",
+            "properties": {
+              "accountId": { "type": "string" },
+              "asset": { "type": "string" },
+              "amount": { "type": "string" },
+              "txHash": { "type": "string" }
+            },
+            "required": ["accountId", "asset", "amount"]
+          }
+        }
+      }
+    },
+    {
+      "type": "com.oenexa.wallet.balance.reserved.v1",
+      "description": "Emitted when funds are held for active order placement",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "type": "string" },
+          "data": {
+            "type": "object",
+            "properties": {
+              "accountId": { "type": "string" },
+              "orderId": { "type": "string" },
+              "asset": { "type": "string" },
+              "amount": { "type": "string" }
+            },
+            "required": ["accountId", "orderId", "amount"]
+          }
+        }
+      }
+    }
+  ]
+}
