@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { WalletService } from '../service/WalletService.js';
-import { EventTypes } from '@oenexa/event-schemas';
+import { EventTypes } from '../domain/events.js';
 
 describe('OENEXA Wallet Service & Custody Ledger', () => {
   it('creates wallet account and dispatches CloudEvent', () => {

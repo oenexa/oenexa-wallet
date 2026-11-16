@@ -4,7 +4,7 @@ import {
   EventTypes,
   type CloudEvent,
   type WalletDepositDetectedPayload,
-} from '@oenexa/event-schemas';
+} from '../domain/events.js';
 import type {
   WalletAccount,
   AssetBalance,
