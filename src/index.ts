@@ -1,11 +1,21 @@
 import http from 'node:http';
 import { WalletService } from './service/WalletService.js';
+import { MpcVaultService } from './service/MpcVaultService.js';
+import { BlockchainDepositListener } from './service/BlockchainDepositListener.js';
+import { ProofOfReservesService } from './service/ProofOfReservesService.js';
 
 export * from './domain/types.js';
 export * from './domain/events.js';
 export * from './service/WalletService.js';
+export * from './service/MpcVaultService.js';
+export * from './service/BlockchainDepositListener.js';
+export * from './service/ProofOfReservesService.js';
 
 const wallet = new WalletService();
+const mpcVault = new MpcVaultService();
+const depositListener = new BlockchainDepositListener();
+const porService = new ProofOfReservesService();
+
 const PORT = Number(process.env.PORT) || 8089;
 
 export const server = http.createServer((req, res) => {
@@ -21,12 +31,17 @@ export const server = http.createServer((req, res) => {
     return res.end(JSON.stringify({ success: true, data: wallet.getOutbox() }));
   }
 
+  if (req.url === '/api/wallet/por/latest' && req.method === 'GET') {
+    res.writeHead(200);
+    return res.end(JSON.stringify({ success: true, data: porService.getLatestAttestation() }));
+  }
+
   res.writeHead(404);
   return res.end(JSON.stringify({ success: false, error: 'Endpoint Not Found' }));
 });
 
 if (process.env.NODE_ENV !== 'test') {
   server.listen(PORT, '0.0.0.0', () => {
-    console.log(`[oenexa-wallet] Web3 Non-Custodial Wallet Microservice listening on port ${PORT}`);
+    console.log(`[oenexa-wallet] MPC Custody & Blockchain Ingestion Service listening on port ${PORT}`);
   });
 }
