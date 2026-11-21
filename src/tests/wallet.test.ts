@@ -60,6 +60,25 @@ describe('OENEXA Wallet Service & Custody Ledger', () => {
         destinationAddress: '0xext99',
       });
     }).toThrow(/Insufficient funds/);
+
+    expect(() => {
+      service.withdraw({
+        accountId: account.id,
+        asset: 'USDT',
+        amount: '-50.0000',
+        destinationAddress: '0xext99',
+      });
+    }).toThrow('Withdrawal amount must be greater than zero.');
+
+    expect(() => {
+      service.recordDeposit({
+        accountId: account.id,
+        asset: 'USDT',
+        amount: 'invalid',
+        txHash: '0xbad',
+        confirmations: 1,
+      });
+    }).toThrow('Deposit amount must be greater than zero.');
   });
 
   it('generates quantum shielded note commitment and nullifier hash', () => {

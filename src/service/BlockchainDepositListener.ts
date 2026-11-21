@@ -67,6 +67,14 @@ export class BlockchainDepositListener {
     amount: string;
     currentBlockHeight: number;
   }): IngestedDepositEvent {
+    if (!params.destinationAddress || params.destinationAddress.trim() === '') {
+      throw new Error('Destination address cannot be empty.');
+    }
+    const numAmount = parseFloat(params.amount);
+    if (isNaN(numAmount) || numAmount <= 0) {
+      throw new Error('Deposit amount must be a positive number.');
+    }
+
     const logIdx = params.logIndex ?? 0;
     const compositeKey = `${params.network}:${params.txHash}:${logIdx}`;
 
@@ -159,6 +167,7 @@ export class BlockchainDepositListener {
         const chain = this.CHAIN_RULES[params.network];
         if (event.confirmations < (chain?.finalityBlocks ?? 12)) {
           event.status = 'REORGED';
+          event.settledAt = undefined;
           this.processedTransactions.delete(key);
           affected.push(event);
         }

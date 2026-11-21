@@ -144,6 +144,37 @@ describe('Production Blockchain Deposit Listener Suite', () => {
 
     expect(reorged).toHaveLength(1);
     expect(reorged[0].status).toBe('REORGED');
+    expect(reorged[0].settledAt).toBeUndefined();
+  });
+
+  it('rejects deposit ingestion with empty address or invalid amount', () => {
+    const listener = new BlockchainDepositListener();
+
+    expect(() =>
+      listener.ingestOnChainEvent({
+        network: 'BITCOIN',
+        asset: 'BTC',
+        txHash: '0xabc',
+        blockNumber: 100,
+        blockHash: '0xhash',
+        destinationAddress: '',
+        amount: '1.5',
+        currentBlockHeight: 100,
+      })
+    ).toThrow('Destination address cannot be empty.');
+
+    expect(() =>
+      listener.ingestOnChainEvent({
+        network: 'BITCOIN',
+        asset: 'BTC',
+        txHash: '0xabc',
+        blockNumber: 100,
+        blockHash: '0xhash',
+        destinationAddress: 'bc1qvalid',
+        amount: '-5.0',
+        currentBlockHeight: 100,
+      })
+    ).toThrow('Deposit amount must be a positive number.');
   });
 });
 
@@ -198,5 +229,28 @@ describe('Proof of Reserves Merkle Solvency Engine Suite', () => {
     expect(attestation.reserveRatioPercentage).toBe(117.0);
     expect(attestation.auditorSignature).toHaveLength(64);
     expect(por.getLatestAttestation()?.epochId).toBe(attestation.epochId);
+  });
+
+  it('rejects attestation publication if liabilities are zero or negative', () => {
+    const por = new ProofOfReservesService();
+    por.buildMerkleTree(liabilities);
+
+    expect(() =>
+      por.publishAttestation({
+        totalLiabilitiesUSD: 0,
+        totalReservesUSD: 100_000,
+      })
+    ).toThrow('Total liabilities must be greater than zero.');
+  });
+
+  it('rejects attestation publication before Merkle tree is built', () => {
+    const por = new ProofOfReservesService();
+
+    expect(() =>
+      por.publishAttestation({
+        totalLiabilitiesUSD: 1_000_000,
+        totalReservesUSD: 1_200_000,
+      })
+    ).toThrow(/Cannot publish attestation without a computed Merkle root/);
   });
 });

@@ -98,9 +98,11 @@ export class MpcVaultService {
         break;
       case 'EUR':
         derivationPath = `iban/de/oenexa/${this.hashIndex(userId)}`;
-        address = `DE89370400440532${seed.subarray(0, 4).readUInt32BE(0).toString().slice(0, 8)}`;
+        address = `DE89370400440532${seed.subarray(0, 4).readUInt32BE(0).toString().padStart(8, '0').slice(0, 8)}`;
         network = 'SEPA Instant / Bundesbank Direct';
         break;
+      default:
+        throw new Error(`Unsupported asset for address derivation: ${asset}`);
     }
 
     const pqBinding = crypto.createHash('sha3-256')

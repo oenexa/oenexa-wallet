@@ -163,6 +163,15 @@ export class ProofOfReservesService {
     onChainContractAddress?: string;
   }): ReserveAttestation {
     const root = this.getRoot();
+    if (!root) {
+      throw new Error('Cannot publish attestation without a computed Merkle root. Run buildMerkleTree() first.');
+    }
+    if (params.totalLiabilitiesUSD <= 0) {
+      throw new Error('Total liabilities must be greater than zero.');
+    }
+    if (params.totalReservesUSD < 0) {
+      throw new Error('Total reserves cannot be negative.');
+    }
     const ratio = (params.totalReservesUSD / params.totalLiabilitiesUSD) * 100;
 
     const epochId = `por_epoch_${Date.now()}`;

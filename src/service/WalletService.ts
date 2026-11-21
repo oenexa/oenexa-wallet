@@ -57,6 +57,10 @@ export class WalletService {
     txHash: string;
     confirmations: number;
   }): { entry: LedgerEntry; event: CloudEvent<any> } {
+    const depAmount = parseFloat(params.amount);
+    if (isNaN(depAmount) || depAmount <= 0) {
+      throw new Error('Deposit amount must be greater than zero.');
+    }
     const account = this.accounts.get(params.accountId);
     if (!account) {
       throw new Error(`Wallet account '${params.accountId}' not found.`);
@@ -132,7 +136,7 @@ export class WalletService {
     const requested = parseFloat(params.amount);
     const available = parseFloat(bal.available);
 
-    if (requested <= 0) {
+    if (isNaN(requested) || requested <= 0) {
       throw new Error('Withdrawal amount must be greater than zero.');
     }
     if (requested > available) {

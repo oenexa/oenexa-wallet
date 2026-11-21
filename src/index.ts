@@ -20,24 +20,37 @@ const PORT = Number(process.env.PORT) || 8089;
 
 export const server = http.createServer((req, res) => {
   res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-  if (req.url === '/health' && req.method === 'GET') {
-    res.writeHead(200);
-    return res.end(JSON.stringify({ status: 'UP', service: 'oenexa-wallet', timestamp: new Date().toISOString() }));
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204);
+    return res.end();
   }
 
-  if (req.url === '/api/wallet/outbox' && req.method === 'GET') {
-    res.writeHead(200);
-    return res.end(JSON.stringify({ success: true, data: wallet.getOutbox() }));
-  }
+  try {
+    if (req.url === '/health' && req.method === 'GET') {
+      res.writeHead(200);
+      return res.end(JSON.stringify({ status: 'UP', service: 'oenexa-wallet', timestamp: new Date().toISOString() }));
+    }
 
-  if (req.url === '/api/wallet/por/latest' && req.method === 'GET') {
-    res.writeHead(200);
-    return res.end(JSON.stringify({ success: true, data: porService.getLatestAttestation() }));
-  }
+    if (req.url === '/api/wallet/outbox' && req.method === 'GET') {
+      res.writeHead(200);
+      return res.end(JSON.stringify({ success: true, data: wallet.getOutbox() }));
+    }
 
-  res.writeHead(404);
-  return res.end(JSON.stringify({ success: false, error: 'Endpoint Not Found' }));
+    if (req.url === '/api/wallet/por/latest' && req.method === 'GET') {
+      res.writeHead(200);
+      return res.end(JSON.stringify({ success: true, data: porService.getLatestAttestation() }));
+    }
+
+    res.writeHead(404);
+    return res.end(JSON.stringify({ success: false, error: 'Endpoint Not Found' }));
+  } catch (err: any) {
+    res.writeHead(500);
+    return res.end(JSON.stringify({ success: false, error: err?.message || 'Internal Server Error' }));
+  }
 });
 
 if (process.env.NODE_ENV !== 'test') {
