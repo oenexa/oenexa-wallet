@@ -7,6 +7,7 @@ import { DoubleEntryLedgerService } from './service/DoubleEntryLedgerService.js'
 import { ReconciliationEngine } from './service/ReconciliationEngine.js';
 import { TravelRuleService } from './service/TravelRuleService.js';
 import { TransactionFraudGuard } from './service/TransactionFraudGuard.js';
+import { EventOutboxRelayerService } from './service/EventOutboxRelayerService.js';
 
 export * from './domain/types.js';
 export * from './domain/events.js';
@@ -18,6 +19,7 @@ export * from './service/DoubleEntryLedgerService.js';
 export * from './service/ReconciliationEngine.js';
 export * from './service/TravelRuleService.js';
 export * from './service/TransactionFraudGuard.js';
+export * from './service/EventOutboxRelayerService.js';
 
 const wallet = new WalletService();
 const mpcVault = new MpcVaultService();
@@ -27,6 +29,7 @@ const doubleEntryLedger = new DoubleEntryLedgerService();
 const reconciliation = new ReconciliationEngine(doubleEntryLedger, mpcVault);
 const travelRule = new TravelRuleService();
 const fraudGuard = new TransactionFraudGuard();
+const outboxRelayer = new EventOutboxRelayerService();
 
 const PORT = Number(process.env.PORT) || 8089;
 
