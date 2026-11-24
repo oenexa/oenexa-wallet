@@ -24,6 +24,7 @@ export * from './service/TransactionStateMachine.js';
 export * from './service/DashboardBootstrapService.js';
 export * from './service/P2pEscrowService.js';
 export * from './service/WithdrawalGateService.js';
+export * from './registry/DigitalAssetRegistry.js';
 
 const wallet = new WalletService();
 const mpcVault = new MpcVaultService();
