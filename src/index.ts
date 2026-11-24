@@ -20,6 +20,10 @@ export * from './service/ReconciliationEngine.js';
 export * from './service/TravelRuleService.js';
 export * from './service/TransactionFraudGuard.js';
 export * from './service/EventOutboxRelayerService.js';
+export * from './service/TransactionStateMachine.js';
+export * from './service/DashboardBootstrapService.js';
+export * from './service/P2pEscrowService.js';
+export * from './service/WithdrawalGateService.js';
 
 const wallet = new WalletService();
 const mpcVault = new MpcVaultService();
